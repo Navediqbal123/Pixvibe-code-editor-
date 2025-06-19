@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pixvibe Code Editor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="header">
+    <h1>Pixvibe Code Editor</h1>
+    <button id="download" class="download-btn">Download ZIP</button>
+  </div>
+  <div class="container">
+    <div class="editor">
+      <textarea id="html" placeholder="Write HTML..."></textarea>
+      <textarea id="css" placeholder="Write CSS..."></textarea>
+      <textarea id="js" placeholder="Write JavaScript..."></textarea>
+    </div>
+    <div class="preview">
+      <iframe id="output"></iframe>
+    </div>
+  </div>
+  <script src="jszip.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
