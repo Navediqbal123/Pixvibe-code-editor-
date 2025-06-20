@@ -1,128 +1,105 @@
-
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Pixvibe Editor</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pixvibe Stitch</title>
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       display: flex;
       height: 100vh;
-      overflow: hidden;
     }
     .sidebar {
-      width: 200px;
-      background-color: #111;
+      width: 250px;
+      background: #111;
       color: white;
-      padding: 10px;
+      padding: 1rem;
       overflow-y: auto;
     }
-    .editor {
+    .main {
       flex: 1;
       display: flex;
       flex-direction: column;
-      background-color: #1e1e1e;
-      color: white;
     }
-    .input-bar {
-      padding: 10px;
-      background-color: #222;
+    .top {
+      padding: 1rem;
+      background: #222;
       display: flex;
+      gap: 1rem;
     }
-    .input-bar input {
+    .top input {
       flex: 1;
-      padding: 8px;
-      font-size: 14px;
-      border-radius: 4px;
-      border: none;
+      padding: 0.5rem;
+      font-size: 1rem;
     }
-    .input-bar button {
-      margin-left: 10px;
-      padding: 8px 12px;
-      font-size: 14px;
-      border: none;
-      border-radius: 4px;
-      background-color: #8e44ad;
+    .top button {
+      background: #a855f7;
       color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
       cursor: pointer;
     }
-    .main {
+    .editor {
       display: flex;
       flex: 1;
-      overflow: hidden;
     }
-    textarea {
-      width: 50%;
-      padding: 10px;
-      font-size: 14px;
-      border: none;
-      background-color: #1e1e1e;
-      color: white;
+    .code, .preview {
+      flex: 1;
+      padding: 1rem;
+      overflow: auto;
     }
-    iframe {
-      width: 50%;
-      border: none;
-      background-color: white;
+    .code textarea {
+      width: 100%;
+      height: 100%;
+      font-family: monospace;
+      font-size: 1rem;
     }
-    .download-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #27ae60;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 4px;
-      cursor: pointer;
+    .history-item {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
     <h3>History</h3>
-    <ul id="history" style="list-style: none; padding: 0;"></ul>
+    <div id="history"></div>
   </div>
-  <div class="editor">
-    <div class="input-bar">
-      <input id="prompt" type="text" placeholder="Enter prompt here...">
+  <div class="main">
+    <div class="top">
+      <input type="text" id="prompt" placeholder="Describe your design...">
       <button onclick="generate()">Generate</button>
-      <button class="download-btn" onclick="downloadZip()">Download ZIP</button>
     </div>
-    <div class="main">
-      <textarea id="code" oninput="updatePreview()"></textarea>
-      <iframe id="preview"></iframe>
+    <div class="editor">
+      <div class="code">
+        <textarea id="code"></textarea>
+      </div>
+      <div class="preview" id="preview"></div>
     </div>
-  </div>  <script>
-    const codeEl = document.getElementById("code");
-    const previewEl = document.getElementById("preview");
-    const historyEl = document.getElementById("history");
-    const promptEl = document.getElementById("prompt");
+  </div>
 
-    function updatePreview() {
-      const html = codeEl.value;
-      previewEl.srcdoc = html;
-    }
-
+  <script>
     function generate() {
-      const prompt = promptEl.value;
-      if (!prompt) return;
-      const html = `<h1>${prompt}</h1>`;
-      codeEl.value = html;
-      updatePreview();
-      const li = document.createElement("li");
-      li.textContent = prompt;
-      historyEl.appendChild(li);
-    }
+      const prompt = document.getElementById('prompt').value;
+      const history = document.getElementById('history');
+      const codeBox = document.getElementById('code');
+      const preview = document.getElementById('preview');
 
-    function downloadZip() {
-      const zip = new JSZip();
-      zip.file("index.html", codeEl.value);
-      zip.generateAsync({ type: "blob" }).then(content => {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(content);
-        a.download = "PixvibeEditor.zip";
-        a.click();
-      });
+      // Add to history
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.innerText = prompt;
+      history.prepend(item);
+
+      // Simple HTML generator (mock)
+      const html = `<h1>${prompt}</h1>`;
+      codeBox.value = html;
+      preview.innerHTML = html;
     }
-  </script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script></body>
+  </script>
+</body>
 </html>
