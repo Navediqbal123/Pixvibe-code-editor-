@@ -1,53 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
+
+<!DOCTYPE html><html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pixvibe Editor</title>
   <style>
-    body { margin: 0; display: flex; font-family: sans-serif; height: 100vh; }
-    .sidebar { width: 200px; background: #111; color: white; padding: 1rem; overflow-y: auto; }
-    .main { flex: 1; display: flex; flex-direction: column; }
-    .editor { flex: 1; display: flex; background: #1e1e1e; }
-    .code { width: 50%; background: #1e1e1e; color: white; padding: 1rem; font-family: monospace; white-space: pre-wrap; }
-    .preview { width: 50%; background: white; padding: 1rem; overflow: auto; }
-    .prompt-bar { padding: 1rem; background: #2c2c2c; display: flex; }
-    .prompt-bar input { flex: 1; padding: 0.5rem; border: none; border-radius: 5px; margin-right: 1rem; }
-    .prompt-bar button { padding: 0.5rem 1rem; border: none; background: #6200ea; color: white; border-radius: 5px; cursor: pointer; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 200px;
+      background-color: #111;
+      color: white;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    .editor {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #1e1e1e;
+      color: white;
+    }
+    .input-bar {
+      padding: 10px;
+      background-color: #222;
+      display: flex;
+    }
+    .input-bar input {
+      flex: 1;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: none;
+    }
+    .input-bar button {
+      margin-left: 10px;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #8e44ad;
+      color: white;
+      cursor: pointer;
+    }
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    textarea {
+      width: 50%;
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      background-color: #1e1e1e;
+      color: white;
+    }
+    iframe {
+      width: 50%;
+      border: none;
+      background-color: white;
+    }
+    .download-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="sidebar">
     <h3>History</h3>
-    <ul id="historyList"></ul>
+    <ul id="history" style="list-style: none; padding: 0;"></ul>
   </div>
-  <div class="main">
-    <div class="prompt-bar">
-      <input type="text" id="promptInput" placeholder="Describe your design...">
+  <div class="editor">
+    <div class="input-bar">
+      <input id="prompt" type="text" placeholder="Enter prompt here...">
       <button onclick="generate()">Generate</button>
+      <button class="download-btn" onclick="downloadZip()">Download ZIP</button>
     </div>
-    <div class="editor">
-      <div class="code" id="codeArea">&lt;h1&gt;Welcome to Pixvibe&lt;/h1&gt;</div>
-      <div class="preview" id="previewArea">Preview will appear here</div>
+    <div class="main">
+      <textarea id="code" oninput="updatePreview()"></textarea>
+      <iframe id="preview"></iframe>
     </div>
-  </div>
-  <script>
+  </div>  <script>
+    const codeEl = document.getElementById("code");
+    const previewEl = document.getElementById("preview");
+    const historyEl = document.getElementById("history");
+    const promptEl = document.getElementById("prompt");
+
+    function updatePreview() {
+      const html = codeEl.value;
+      previewEl.srcdoc = html;
+    }
+
     function generate() {
-      const prompt = document.getElementById("promptInput").value;
-      const historyList = document.getElementById("historyList");
-      const codeArea = document.getElementById("codeArea");
-      const previewArea = document.getElementById("previewArea");
-
-      if (!prompt.trim()) return;
-
+      const prompt = promptEl.value;
+      if (!prompt) return;
+      const html = `<h1>${prompt}</h1>`;
+      codeEl.value = html;
+      updatePreview();
       const li = document.createElement("li");
       li.textContent = prompt;
-      historyList.appendChild(li);
-
-      const generatedHTML = "<h1>" + prompt + "</h1>";
-      codeArea.textContent = generatedHTML;
-      previewArea.innerHTML = generatedHTML;
+      historyEl.appendChild(li);
     }
-  </script>
-</body>
+
+    function downloadZip() {
+      const zip = new JSZip();
+      zip.file("index.html", codeEl.value);
+      zip.generateAsync({ type: "blob" }).then(content => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(content);
+        a.download = "PixvibeEditor.zip";
+        a.click();
+      });
+    }
+  </script>  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script></body>
 </html>
