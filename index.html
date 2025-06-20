@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pixvibe Stitch</title>
+  <title>Pixvibe Editor</title>
   <style>
     body {
       margin: 0;
@@ -12,10 +12,10 @@
       height: 100vh;
     }
     .sidebar {
-      width: 250px;
-      background: #111;
+      width: 200px;
+      background-color: #111;
       color: white;
-      padding: 1rem;
+      padding: 10px;
       overflow-y: auto;
     }
     .main {
@@ -23,82 +23,88 @@
       display: flex;
       flex-direction: column;
     }
-    .top {
-      padding: 1rem;
-      background: #222;
+    .prompt-bar {
       display: flex;
-      gap: 1rem;
+      padding: 10px;
+      background-color: #222;
     }
-    .top input {
+    .prompt-bar input {
       flex: 1;
-      padding: 0.5rem;
-      font-size: 1rem;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      background: #333;
+      color: white;
     }
-    .top button {
-      background: #a855f7;
+    .prompt-bar button {
+      margin-left: 10px;
+      padding: 8px 16px;
+      background-color: #8e44ad;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .editor-container {
+      flex: 1;
+      display: flex;
+    }
+    textarea {
+      width: 50%;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 14px;
+      background-color: #1e1e1e;
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      cursor: pointer;
     }
-    .editor {
-      display: flex;
-      flex: 1;
-    }
-    .code, .preview {
-      flex: 1;
-      padding: 1rem;
-      overflow: auto;
-    }
-    .code textarea {
-      width: 100%;
-      height: 100%;
-      font-family: monospace;
-      font-size: 1rem;
-    }
-    .history-item {
-      margin-bottom: 10px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 5px;
+    iframe {
+      width: 50%;
+      border: none;
+      background: white;
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
     <h3>History</h3>
-    <div id="history"></div>
+    <ul id="history" style="padding-left: 20px;"></ul>
   </div>
   <div class="main">
-    <div class="top">
-      <input type="text" id="prompt" placeholder="Describe your design...">
+    <div class="prompt-bar">
+      <input id="prompt" type="text" placeholder="Enter prompt...">
       <button onclick="generate()">Generate</button>
     </div>
-    <div class="editor">
-      <div class="code">
-        <textarea id="code"></textarea>
-      </div>
-      <div class="preview" id="preview"></div>
+    <div class="editor-container">
+      <textarea id="codeEditor" oninput="updatePreview()"></textarea>
+      <iframe id="previewBox"></iframe>
     </div>
   </div>
 
   <script>
+    const codeEditor = document.getElementById('codeEditor');
+    const previewBox = document.getElementById('previewBox');
+    const history = document.getElementById('history');
+    const prompt = document.getElementById('prompt');
+
     function generate() {
-      const prompt = document.getElementById('prompt').value;
-      const history = document.getElementById('history');
-      const codeBox = document.getElementById('code');
-      const preview = document.getElementById('preview');
+      const value = prompt.value.trim();
+      if (!value) return;
 
       // Add to history
-      const item = document.createElement('div');
-      item.className = 'history-item';
-      item.innerText = prompt;
+      const item = document.createElement('li');
+      item.textContent = value;
       history.prepend(item);
 
-      // Simple HTML generator (mock)
-      const html = `<h1>${prompt}</h1>`;
-      codeBox.value = html;
-      preview.innerHTML = html;
+      // Generate HTML code
+      const html = `<h1>${value}</h1>`;
+      codeEditor.value = html;
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const html = codeEditor.value;
+      previewBox.srcdoc = html;
     }
   </script>
 </body>
