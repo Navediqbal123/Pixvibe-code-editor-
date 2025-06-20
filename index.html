@@ -1,116 +1,52 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pixvibe Editor</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background-color: #1e1e1e;
-      color: white;
-    }
-    header {
-      background-color: #111;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header h1 {
-      font-size: 1.2rem;
-      margin: 0;
-    }
-    .editor-container {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
-    textarea {
-      width: 50%;
-      height: 100%;
-      background-color: #2d2d2d;
-      color: #f8f8f2;
-      padding: 10px;
-      font-family: monospace;
-      font-size: 1rem;
-      border: none;
-      resize: none;
-      outline: none;
-    }
-    iframe {
-      width: 50%;
-      height: 100%;
-      border: none;
-      background-color: white;
-    }
-    footer {
-      background-color: #111;
-      padding: 10px;
-      text-align: right;
-    }
-    button {
-      background-color: #00bcd4;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      margin-left: 5px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0097a7;
-    }
+    body { margin: 0; display: flex; font-family: sans-serif; height: 100vh; }
+    .sidebar { width: 200px; background: #111; color: white; padding: 1rem; overflow-y: auto; }
+    .main { flex: 1; display: flex; flex-direction: column; }
+    .editor { flex: 1; display: flex; background: #1e1e1e; }
+    .code { width: 50%; background: #1e1e1e; color: white; padding: 1rem; font-family: monospace; white-space: pre-wrap; }
+    .preview { width: 50%; background: white; padding: 1rem; overflow: auto; }
+    .prompt-bar { padding: 1rem; background: #2c2c2c; display: flex; }
+    .prompt-bar input { flex: 1; padding: 0.5rem; border: none; border-radius: 5px; margin-right: 1rem; }
+    .prompt-bar button { padding: 0.5rem 1rem; border: none; background: #6200ea; color: white; border-radius: 5px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Pixvibe Editor</h1>
-    <div>
-      <button onclick="runCode()">Run</button>
-      <button onclick="askPrompt()">Prompt</button>
-      <button onclick="downloadZip()">Download ZIP</button>
-    </div>
-  </header>
-  <div class="editor-container">
-    <textarea id="editor">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;&lt;title&gt;Demo&lt;/title&gt;&lt;/head&gt;
-&lt;body&gt;
-&lt;h1&gt;Hello from Pixvibe!&lt;/h1&gt;
-&lt;/body&gt;
-&lt;/html&gt;</textarea>
-    <iframe id="output"></iframe>
+  <div class="sidebar">
+    <h3>History</h3>
+    <ul id="historyList"></ul>
   </div>
-  <footer>&copy; 2025 Pixvibe</footer>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <div class="main">
+    <div class="prompt-bar">
+      <input type="text" id="promptInput" placeholder="Describe your design...">
+      <button onclick="generate()">Generate</button>
+    </div>
+    <div class="editor">
+      <div class="code" id="codeArea">&lt;h1&gt;Welcome to Pixvibe&lt;/h1&gt;</div>
+      <div class="preview" id="previewArea">Preview will appear here</div>
+    </div>
+  </div>
   <script>
-    function runCode() {
-      const code = document.getElementById("editor").value;
-      document.getElementById("output").srcdoc = code;
-    }
+    function generate() {
+      const prompt = document.getElementById("promptInput").value;
+      const historyList = document.getElementById("historyList");
+      const codeArea = document.getElementById("codeArea");
+      const previewArea = document.getElementById("previewArea");
 
-    function askPrompt() {
-      const message = prompt("Enter your message:");
-      if (message) alert("You entered: " + message);
-    }
+      if (!prompt.trim()) return;
 
-    function downloadZip() {
-      const zip = new JSZip();
-      const code = document.getElementById("editor").value;
-      zip.file("index.html", code);
-      zip.generateAsync({ type: "blob" }).then(function (content) {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(content);
-        a.download = "Pixvibe_Code.zip";
-        a.click();
-      });
+      const li = document.createElement("li");
+      li.textContent = prompt;
+      historyList.appendChild(li);
+
+      const generatedHTML = "<h1>" + prompt + "</h1>";
+      codeArea.textContent = generatedHTML;
+      previewArea.innerHTML = generatedHTML;
     }
   </script>
 </body>
