@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixvibe Editor</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #1e1e1e;
+      color: white;
+    }
+    header {
+      background-color: #111;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+    .editor-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    textarea {
+      width: 50%;
+      height: 100%;
+      background-color: #2d2d2d;
+      color: #f8f8f2;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 1rem;
+      border: none;
+      resize: none;
+      outline: none;
+    }
+    iframe {
+      width: 50%;
+      height: 100%;
+      border: none;
+      background-color: white;
+    }
+    footer {
+      background-color: #111;
+      padding: 10px;
+      text-align: right;
+    }
+    button {
+      background-color: #00bcd4;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      margin-left: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0097a7;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pixvibe Editor</h1>
+    <div>
+      <button onclick="runCode()">Run</button>
+      <button onclick="askPrompt()">Prompt</button>
+      <button onclick="downloadZip()">Download ZIP</button>
+    </div>
+  </header>
+  <div class="editor-container">
+    <textarea id="editor">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Demo&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Hello from Pixvibe!&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+    <iframe id="output"></iframe>
+  </div>
+  <footer>&copy; 2025 Pixvibe</footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script>
+    function runCode() {
+      const code = document.getElementById("editor").value;
+      document.getElementById("output").srcdoc = code;
+    }
+
+    function askPrompt() {
+      const message = prompt("Enter your message:");
+      if (message) alert("You entered: " + message);
+    }
+
+    function downloadZip() {
+      const zip = new JSZip();
+      const code = document.getElementById("editor").value;
+      zip.file("index.html", code);
+      zip.generateAsync({ type: "blob" }).then(function (content) {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(content);
+        a.download = "Pixvibe_Code.zip";
+        a.click();
+      });
+    }
+  </script>
+</body>
+</html>
